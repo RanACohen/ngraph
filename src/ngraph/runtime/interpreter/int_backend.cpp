@@ -26,6 +26,10 @@ static bool static_init()
 {
     runtime::Backend::register_backend("INTERPRETER",
                                        make_shared<runtime::interpreter::INT_Backend>());
+    runtime::Backend::register_backend_factory(
+        "INTERPRETER", [](const string& name) -> shared_ptr<runtime::Backend> {
+            return make_shared<runtime::interpreter::INT_Backend>();
+        });
     return true;
 };
 

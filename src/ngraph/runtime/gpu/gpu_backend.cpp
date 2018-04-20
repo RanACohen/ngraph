@@ -26,6 +26,10 @@ using namespace std;
 static bool static_init()
 {
     runtime::Backend::register_backend("GPU", make_shared<runtime::gpu::GPU_Backend>());
+    runtime::Backend::register_backend_factory(
+        "GPU", [](const string& name) -> shared_ptr<runtime::Backend> {
+            return make_shared<runtime::gpu::GPU_Backend>();
+        });
     return true;
 };
 
