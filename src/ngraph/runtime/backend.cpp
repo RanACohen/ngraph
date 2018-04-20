@@ -25,6 +25,7 @@ using namespace ngraph;
 
 bool runtime::Backend::register_backend(const string& name, shared_ptr<Backend> backend)
 {
+    NGRAPH_INFO << "Backend::register_backend " << name;
     get_backend_map().insert({name, backend});
     return true;
 }
@@ -33,6 +34,23 @@ unordered_map<string, shared_ptr<runtime::Backend>>& runtime::Backend::get_backe
 {
     static unordered_map<string, shared_ptr<Backend>> backend_map;
     return backend_map;
+}
+
+bool runtime::Backend::register_backend_factory(
+    const string& name,
+    std::function<std::shared_ptr<runtime::Backend>(const std::string&)> factory)
+{
+    NGRAPH_INFO << "Backend::register_backend_factory " << name;
+    get_backend_factory_map().insert({name, factory});
+    return true;
+}
+
+unordered_map<string, function<shared_ptr<runtime::Backend>(const string&)>>&
+    runtime::Backend::get_backend_factory_map()
+{
+    static unordered_map<string, function<std::shared_ptr<Backend>(const string&)>>
+        backend_factory_map;
+    return backend_factory_map;
 }
 
 runtime::Backend::~Backend()

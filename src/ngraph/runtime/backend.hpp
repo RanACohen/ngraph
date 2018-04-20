@@ -75,6 +75,9 @@ namespace ngraph
             virtual std::vector<PerformanceCounter>
                 get_performance_data(std::shared_ptr<Function> func) const;
 
+            static bool register_backend_factory(
+                const std::string& name,
+                std::function<std::shared_ptr<Backend>(const std::string&)> factory);
             static bool register_backend(const std::string& name, std::shared_ptr<Backend>);
 
         protected:
@@ -84,6 +87,9 @@ namespace ngraph
 
         private:
             static std::unordered_map<std::string, std::shared_ptr<Backend>>& get_backend_map();
+            static std::unordered_map<std::string,
+                                      std::function<std::shared_ptr<Backend>(const std::string&)>>&
+                get_backend_factory_map();
         };
     }
 }
