@@ -76,9 +76,7 @@ namespace ngraph
                 get_performance_data(std::shared_ptr<Function> func) const;
 
             static bool register_backend_factory(
-                const std::string& name,
-                std::function<std::shared_ptr<Backend>(const std::string&)> factory);
-            static bool register_backend(const std::string& name, std::shared_ptr<Backend>);
+                const std::string& name, std::function<std::shared_ptr<Backend>()> factory);
 
         protected:
             void validate_call(std::shared_ptr<const Function> func,
@@ -87,8 +85,7 @@ namespace ngraph
 
         private:
             static std::unordered_map<std::string, std::shared_ptr<Backend>>& get_backend_map();
-            static std::unordered_map<std::string,
-                                      std::function<std::shared_ptr<Backend>(const std::string&)>>&
+            static std::unordered_map<std::string, std::function<std::shared_ptr<Backend>()>>&
                 get_backend_factory_map();
         };
     }

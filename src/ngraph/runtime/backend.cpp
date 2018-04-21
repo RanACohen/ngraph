@@ -23,13 +23,6 @@
 using namespace std;
 using namespace ngraph;
 
-bool runtime::Backend::register_backend(const string& name, shared_ptr<Backend> backend)
-{
-    NGRAPH_INFO << "Backend::register_backend " << name;
-    get_backend_map().insert({name, backend});
-    return true;
-}
-
 unordered_map<string, shared_ptr<runtime::Backend>>& runtime::Backend::get_backend_map()
 {
     static unordered_map<string, shared_ptr<Backend>> backend_map;
@@ -38,18 +31,17 @@ unordered_map<string, shared_ptr<runtime::Backend>>& runtime::Backend::get_backe
 
 bool runtime::Backend::register_backend_factory(
     const string& name,
-    std::function<std::shared_ptr<runtime::Backend>(const std::string&)> factory)
+    std::function<std::shared_ptr<runtime::Backend>()> factory)
 {
     NGRAPH_INFO << "Backend::register_backend_factory " << name;
     get_backend_factory_map().insert({name, factory});
     return true;
 }
 
-unordered_map<string, function<shared_ptr<runtime::Backend>(const string&)>>&
+unordered_map<string, function<shared_ptr<runtime::Backend>()>>&
     runtime::Backend::get_backend_factory_map()
 {
-    static unordered_map<string, function<std::shared_ptr<Backend>(const string&)>>
-        backend_factory_map;
+    static unordered_map<string, function<std::shared_ptr<Backend>()>> backend_factory_map;
     return backend_factory_map;
 }
 
@@ -59,12 +51,16 @@ runtime::Backend::~Backend()
 
 shared_ptr<runtime::Backend> runtime::Backend::create(const string& type)
 {
-    auto it = get_backend_map().find(type);
-    if (it == get_backend_map().end())
+    if (get_backend_factory_map().count(type) == 0)
     {
-        throw runtime_error("Backend '" + type + "' not found in registered backends.");
+        throw runtime_error("Backend '" + type + "' not found in registered backend factories.");
     }
-    return it->second;
+    if (get_backend_map().count(type) == 0)
+    {
+        auto factory = get_backend_factory_map().at(type);
+        get_backend_map().insert({type, factory()});
+    }
+    return get_backend_map().at(type);
 }
 
 vector<string> runtime::Backend::get_registered_devices()
