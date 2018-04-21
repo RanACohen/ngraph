@@ -32,7 +32,6 @@ unordered_map<string, shared_ptr<runtime::Backend>>& runtime::Backend::get_backe
 bool runtime::Backend::register_backend_factory(
     const string& name, std::function<std::shared_ptr<runtime::Backend>()> factory)
 {
-    NGRAPH_INFO << "Backend::register_backend_factory " << name;
     get_backend_factory_map().insert({name, factory});
     return true;
 }
