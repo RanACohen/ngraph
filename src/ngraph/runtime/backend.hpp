@@ -75,8 +75,8 @@ namespace ngraph
             virtual std::vector<PerformanceCounter>
                 get_performance_data(std::shared_ptr<Function> func) const;
 
-            static bool register_backend_factory(
-                const std::string& name, std::function<std::shared_ptr<Backend>()> factory);
+            static bool register_backend_factory(const std::string& name,
+                                                 std::function<std::shared_ptr<Backend>()> factory);
 
         protected:
             void validate_call(std::shared_ptr<const Function> func,
