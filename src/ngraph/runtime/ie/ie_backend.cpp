@@ -21,7 +21,8 @@
 #include "ngraph/pass/liveness.hpp"
 #include "ngraph/pass/manager.hpp"
 
-#include "ngraph/util.hpp"
+#include "ie_net_builder.hpp"
+#include "ie_net_functions.hpp"
 
 using namespace std;
 using namespace ngraph;
@@ -49,12 +50,19 @@ shared_ptr<runtime::TensorView> runtime::ie::IE_Backend::create_tensor(const ele
     return make_shared<runtime::HostTensorView>(type, shape, memory_pointer, "external");
 }
 
+void convertnGraphtoIE(const Function::Ptr &function, IENetAPI::IENetBuilder &doc)
+{
+
+}
+
 bool runtime::ie::IE_Backend::compile(shared_ptr<Function> function)
 {
     pass::Manager pass_manager;
     pass_manager.register_pass<pass::AssignLayout<DenseTensorViewLayout>>();
     pass_manager.register_pass<pass::Liveness>();
     pass_manager.run_passes(function);
+
+
 
     return true;
 }

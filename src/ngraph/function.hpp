@@ -83,6 +83,8 @@ namespace ngraph
         // updates graph and m_results list
         void replace_node(std::shared_ptr<Node> old, std::shared_ptr<Node> repl);
 
+        typedef std::shared_ptr<Function> Ptr;
+
     protected:
         ResultVector m_results;
         op::ParameterVector m_parameters;

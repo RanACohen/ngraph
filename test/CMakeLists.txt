@@ -70,7 +70,10 @@ add_subdirectory(files)
 #================================================================================================
 # TODO add interpreter back to unit tests when it works
 set(BACKEND_NAMES ${BACKEND_NAMES} "INTERPRETER")
-set(BACKEND_NAMES ${BACKEND_NAMES} "IE")
+
+if (USE_IE)
+    set(BACKEND_NAMES ${BACKEND_NAMES} "IE")
+endif()
 
 if(MKLDNN_INCLUDE_DIR)
     include_directories(SYSTEM ${MKLDNN_INCLUDE_DIR})

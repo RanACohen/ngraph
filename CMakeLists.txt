@@ -30,6 +30,12 @@ SET(GCC_MIN_VERSION 4.8)
 SET(CLANG_MIN_VERSION 3.8)
 SET(APPLE_CLANG_MIN_VERSION 9.0)
 
+if (NOT USE_IE)
+    set (USE_IE $ENV{USE_IE})
+    message("**** setting USE_IE from environment: ${USE_IE}")
+endif()
+
+
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS GCC_MIN_VERSION)
         message(FATAL_ERROR "GCC version must be at least ${GCC_MIN_VERSION}!")

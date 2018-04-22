@@ -14,6 +14,8 @@
 # limitations under the License.
 # ******************************************************************************
 
+set (TARGET_NAME ngraph)
+
 set (SRC
     autodiff/adjoints.cpp
     builder/autobroadcast.cpp
@@ -123,7 +125,6 @@ set (SRC
     runtime/aligned_buffer.cpp
     runtime/backend.cpp
     runtime/host_tensor_view.cpp
-    runtime/ie/ie_backend.cpp
     runtime/interpreter/int_backend.cpp
     runtime/interpreter/int_call_frame.cpp
     runtime/interpreter/int_external_function.cpp
@@ -292,7 +293,21 @@ if (NGRAPH_NNP_ENABLE)
     include_directories(${NNP_TRANSFORMER_INCLUDE_DIR})
 endif()
 
+
+if (USE_IE)
+    # Ran: this should be a seprate project, for now I am re-using what was made
+    message("**** Building IE backend with ${USE_IE}")
+
+    file(GLOB_RECURSE IE_BACKEND_SOURCES runtime/ie/*.cpp)
+    file(GLOB_RECURSE IE_BACKEND_HEADERS runtime/ie/*.hpp)
+
+    set(SRC ${SRC} ${IE_BACKEND_SOURCES} ${IE_BACKEND_HEADERS})
+else()
+    message("**** NOT Building IE backend ")
+endif()
+
 add_library(ngraph SHARED ${SRC})
+
 if (NGRAPH_CPU_ENABLE AND LLVM_INCLUDE_DIR AND MKLDNN_INCLUDE_DIR)
     # Generate the resource file containing all headers used by the codegen compiler
     add_custom_target(header_resource
@@ -408,4 +423,15 @@ if (NGRAPH_NNP_ENABLE)
         DESTINATION ${NGRAPH_INSTALL_INCLUDE}
         FILES_MATCHING PATTERN "*.h"
     )
+endif()
+
+if (USE_IE)
+    target_include_directories(${TARGET_NAME} PUBLIC
+            ${NGRAPH_INCLUDE_PATH}
+            ${USE_IE}/include
+            ${USE_IE}/src/inference_engine/
+            )
+    find_library(IE_LIBRARY inference_engine ${USE_IE}/bin/intel64/Debug/lib)
+        message("*** IE LIB found at: ${IE_LIBRARY}")
+    target_link_libraries(${TARGET_NAME} PRIVATE ${IE_LIBRARY})
 endif()
