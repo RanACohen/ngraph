@@ -73,6 +73,8 @@ namespace ngraph
     /// Row-major strides for a shape
     Strides row_major_strides(const Shape& shape);
 
+    //todo: Ran Cohen: are you sure??
+    // scalar is a vector of 1 dim with size==1, should be: 1 == shape.size() && shape[0]==1
     inline bool is_scalar(const Shape& shape) { return 0 == shape.size(); }
     inline bool is_vector(const Shape& shape) { return 1 == shape.size(); }
 }

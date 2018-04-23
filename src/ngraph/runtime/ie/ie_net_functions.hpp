@@ -105,6 +105,11 @@ namespace IENetAPI {
         return src->outData[index];
     }
 
+    inline void addInput(const InferenceEngine::CNNLayerPtr &layer, const InferenceEngine::DataPtr &src)
+    {
+        src >> layer;
+    }
+
     inline IELayer LayerOf(const OutputPort &src) {
         return src->creatorLayer.lock();
     }

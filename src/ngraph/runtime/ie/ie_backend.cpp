@@ -1,4 +1,4 @@
-/*******************************************************************************
+/******************************************************************************
 * Copyright 2017-2018 Intel Corporation
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,8 +21,7 @@
 #include "ngraph/pass/liveness.hpp"
 #include "ngraph/pass/manager.hpp"
 
-#include "ie_net_builder.hpp"
-#include "ie_net_functions.hpp"
+#include "nGraphIEBridge.h"
 
 using namespace std;
 using namespace ngraph;
@@ -50,10 +49,6 @@ shared_ptr<runtime::TensorView> runtime::ie::IE_Backend::create_tensor(const ele
     return make_shared<runtime::HostTensorView>(type, shape, memory_pointer, "external");
 }
 
-void convertnGraphtoIE(const Function::Ptr &function, IENetAPI::IENetBuilder &doc)
-{
-
-}
 
 bool runtime::ie::IE_Backend::compile(shared_ptr<Function> function)
 {
@@ -62,6 +57,9 @@ bool runtime::ie::IE_Backend::compile(shared_ptr<Function> function)
     pass_manager.register_pass<pass::Liveness>();
     pass_manager.run_passes(function);
 
+    IENetAPI::IENetBuilder netBuilder(function->get_name());
+    nGraphIEBridge bridge;
+    bridge.convert(function, netBuilder);
 
 
     return true;
