@@ -4,26 +4,20 @@
 
 #include "ng_ie_bridge.hpp"
 
-virtual void nGraphIEBridge::addLayer(const shared_ptr<Node> &op)
+void nGraphIEBridge::addLayer(const shared_ptr<Node> &op)
 {
     std::string node_op = op->description();
 
-    if (node_op == "Add")
+    auto it = sm_translators.find("Add");
+    if (it != sm_translators.end())
     {
-        const deque<descriptor::Input> &inputs = op->get_inputs();
-        if (op->get_output_size()!=1) THROW("Add must have one output");
-        if (op->get_input_size()==0) THROW("Add must have at least one input");
-        if (op->get_input_size()==1) {
-            addPort(op->get_instance_id(),0, getPortFromInput(inputs[0])); // skip this node
-            return;
-        }
-        auto layer = IENetAPI::SumLayer::create(getPortFromInput(inputs[0]), getPortFromInput(inputs[1]));
-        for (size_t i=2; i<op->get_input_size(); i++)
-        {
-            IENetAPI::addInput(layer, getPortFromInput(inputs[i]));
-        }
-        addPort(op->get_instance_id(),0,IENetAPI::output(layer));
+        it->second(this, op);
+        return;
     }
+
+    // fallback - automatic conversion using 1:1 mapping
+    op->get_arguments();
+    
 }
 
 void nGraphIEBridge::convert(const Function::Ptr &function, IENetAPI::IENetBuilder &doc)

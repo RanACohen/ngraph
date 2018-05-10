@@ -21,7 +21,7 @@
 #include "ngraph/pass/liveness.hpp"
 #include "ngraph/pass/manager.hpp"
 
-#include "nGraphIEBridge.h"
+#include "ng_ie_bridge.hpp"
 
 using namespace std;
 using namespace ngraph;

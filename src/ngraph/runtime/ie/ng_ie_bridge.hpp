@@ -22,6 +22,7 @@ using namespace ngraph;
 
 class nGraphIEBridge
 {
+    static std::map<std::string, std::function<void(nGraphIEBridge *bridge, const shared_ptr<Node> &op)>> sm_translators;
     std::map<std::pair<size_t,size_t>, IENetAPI::OutputPort> m_portMap;
     std::set<size_t> m_skipList;
 public:
